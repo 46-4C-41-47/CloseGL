@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
 import java.util.Random;
 
 public class Canvas extends JPanel {
-    private BufferedImage screen;
+    private final BufferedImage screen;
 
     public Canvas(Dimension d) {
         super();
