@@ -1,18 +1,28 @@
 package Geometry;
 
 public class Triangle {
-    public int x, y, z;
+    public Point3D[] points;
+
 
     public Triangle() {
-        x = 0;
-        y = 0;
-        z = 0;
+        points = new Point3D[] {
+                new Point3D(),
+                new Point3D(),
+                new Point3D()
+        };
     }
 
 
-    public Triangle(int x, int y, int z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+    public Triangle(Point3D[] points) {
+        if (points.length == 3) {
+            this.points = points;
+        } else {
+            throw new ArrayIndexOutOfBoundsException();
+        }
+    }
+
+
+    public Triangle(Point3D p1, Point3D p2, Point3D p3) {
+        points = new Point3D[] {p1, p2, p3};
     }
 }
