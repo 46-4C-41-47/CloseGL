@@ -1,5 +1,7 @@
 package Application;
 
+import Geometry.Triangle;
+
 import javax.swing.JPanel;
 
 import java.awt.Color;
@@ -10,28 +12,44 @@ import java.awt.image.BufferedImage;
 import java.util.Random;
 
 public class Canvas extends JPanel {
-    private final BufferedImage screen;
+    private BufferedImage screen;
 
     public Canvas(Dimension d) {
         super();
-        this.screen = new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_ARGB);
+        screen = new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_ARGB);
     }
 
 
-    public void draw(Graphics g) {
-        // draw the screen here
+    private void drawTriangle(Graphics g, Triangle triangle) {
+        g.drawLine(triangle.points[0].x, triangle.points[0].y, triangle.points[1].x, triangle.points[1].y);
+        g.drawLine(triangle.points[1].x, triangle.points[1].y, triangle.points[2].x, triangle.points[2].y);
+        g.drawLine(triangle.points[2].x, triangle.points[2].y, triangle.points[0].x, triangle.points[0].y);
+    }
 
+
+    private void clearScreen(Graphics g) {
+        g.fillRect(0, 0, screen.getWidth(), screen.getHeight());
+    }
+
+
+    public void draw() {
+        BufferedImage tmpScreen = new BufferedImage(screen.getWidth(), screen.getWidth(), BufferedImage.TYPE_INT_ARGB);
+        Graphics g = tmpScreen.getGraphics();
+
+
+
+        screen = tmpScreen;
         this.repaint();
     }
 
 
     public Graphics getCanvasGraphics() {
-        return this.screen.getGraphics();
+        return screen.getGraphics();
     }
 
 
     @Override
     public void paintComponent(Graphics g) {
-        g.drawImage(this.screen, 0, 0, null);
+        g.drawImage(screen, 0, 0, null);
     }
 }
