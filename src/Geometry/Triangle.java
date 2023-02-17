@@ -25,4 +25,10 @@ public class Triangle {
     public Triangle(Point3D p1, Point3D p2, Point3D p3) {
         points = new Point3D[] {p1, p2, p3};
     }
+
+
+    @Override
+    public String toString() {
+        return points[0] + ", \n" + points[1] + ", \n" + points[2] + "\n";
+    }
 }

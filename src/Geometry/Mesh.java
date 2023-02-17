@@ -1,9 +1,10 @@
 package Geometry;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Mesh {
-    private ArrayList<Triangle> triangles;
+    private List<Triangle> triangles;
 
     public Mesh() {
         triangles = new ArrayList<>();
@@ -23,5 +24,10 @@ public class Mesh {
 
     public void remove(int index) {
         triangles.remove(index);
+    }
+
+
+    public List<Triangle> getTriangles() {
+        return triangles;
     }
 }
