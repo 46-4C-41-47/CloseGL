@@ -11,6 +11,12 @@ public class Mesh {
     }
 
 
+    public Mesh(Mesh inputMesh) {
+        triangles = new ArrayList<>();
+        triangles.addAll(inputMesh.getTriangles());
+    }
+
+
     public void add(Triangle triangle) {
         triangles.add(triangle);
     }
