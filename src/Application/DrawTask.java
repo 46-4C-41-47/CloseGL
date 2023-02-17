@@ -34,7 +34,6 @@ public class DrawTask extends TimerTask {
             };
 
             projPoints = scalePoints(projPoints);
-
             projectedObject.add(projPoints);
         }
 
@@ -57,7 +56,7 @@ public class DrawTask extends TimerTask {
     @Override
     public void run() {
         elapsedTime += 1000 / (float) Parameters.FRAME_RATE;
-        
+
         List<Mesh> projectedObjects = new ArrayList<>();
         projectedObjects.add(computeProjection(cube));
 
