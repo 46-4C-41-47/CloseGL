@@ -23,7 +23,7 @@ public class DrawTask extends TimerTask {
     }
 
 
-    private Mesh computeProjection(Mesh object) {
+    /*private Mesh computeProjection(Mesh object) {
         Mesh projectedObject = new Mesh();
 
         for (Triangle triangle : object.getTriangles()) {
@@ -31,6 +31,24 @@ public class DrawTask extends TimerTask {
                     Main.multiplyMatrixPoint(triangle.points[0], projMatrix),
                     Main.multiplyMatrixPoint(triangle.points[1], projMatrix),
                     Main.multiplyMatrixPoint(triangle.points[2], projMatrix)
+            );
+
+            projectedTriangle = scalePoints(projectedTriangle);
+            projectedObject.add(projectedTriangle);
+        }
+
+        return projectedObject;
+    }*/
+
+
+    private Mesh computeProjection(Mesh object) {
+        Mesh projectedObject = new Mesh();
+
+        for (Triangle triangle : object.getTriangles()) {
+            Triangle projectedTriangle = new Triangle(
+                    triangle.points[0],
+                    triangle.points[1],
+                    triangle.points[2]
             );
 
             projectedTriangle = scalePoints(projectedTriangle);
@@ -86,7 +104,7 @@ public class DrawTask extends TimerTask {
             point.x += 2;
             point.x *= (float) Parameters.FRAME_SIZE.width  / Parameters.SCALE_FACTOR;
             point.y += 2;
-            point.y *= (float) Parameters.FRAME_SIZE.height / Parameters.SCALE_FACTOR;
+            point.y *= (float) Parameters.FRAME_SIZE.width / Parameters.SCALE_FACTOR;
         }
 
         return triangle;

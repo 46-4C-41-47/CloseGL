@@ -16,6 +16,7 @@ public class Frame extends JFrame {
 
         this.setSize(this.size);
         this.setResizable(false);
+        this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.add(canvas);
         this.setVisible(true);

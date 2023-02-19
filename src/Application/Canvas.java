@@ -12,7 +12,7 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 
 public class Canvas extends JPanel {
-    private BufferedImage screen;
+    private final BufferedImage screen;
 
 
     public Canvas(Dimension d) {
@@ -44,8 +44,6 @@ public class Canvas extends JPanel {
                 drawTriangle(g, triangle);
             }
         }
-
-        //this.repaint();
     }
 
 
