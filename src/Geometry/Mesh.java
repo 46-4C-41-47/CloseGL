@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Mesh {
-    private List<Triangle> triangles;
+    private final List<Triangle> triangles;
 
     public Mesh() {
         triangles = new ArrayList<>();
@@ -35,5 +35,17 @@ public class Mesh {
 
     public List<Triangle> getTriangles() {
         return triangles;
+    }
+
+
+    @Override
+    public String toString() {
+        String string = "";
+
+        for (Triangle triangle: triangles) {
+            string += triangle + "\n";
+        }
+
+        return string;
     }
 }

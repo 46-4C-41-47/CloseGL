@@ -13,6 +13,11 @@ public class Triangle {
     }
 
 
+    public Triangle(Triangle triangle) {
+        points = triangle.points;
+    }
+
+
     public Triangle(Point3D[] points) {
         if (points.length == 3) {
             this.points = points;
@@ -24,6 +29,19 @@ public class Triangle {
 
     public Triangle(Point3D p1, Point3D p2, Point3D p3) {
         points = new Point3D[] {p1, p2, p3};
+    }
+
+
+    public Triangle shiftZ(float zOffset) {
+        Triangle newTriangle = new Triangle();
+
+        for (int i = 0; i < points.length; i++) {
+            newTriangle.points[i].x = this.points[i].x;
+            newTriangle.points[i].y = this.points[i].y;
+            newTriangle.points[i].z = this.points[i].z + zOffset;
+        }
+
+        return newTriangle;
     }
 
 
