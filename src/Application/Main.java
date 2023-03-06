@@ -1,5 +1,6 @@
 package Application;
 
+import Geometry.CartesianPlane;
 import Geometry.Matrix;
 import Geometry.Mesh;
 import Geometry.Point3D;
@@ -10,8 +11,19 @@ public class Main {
     public static void main(String[] args) {
         Frame frame = new Frame();
         Timer timer = new Timer(true);
-        DrawTask drawTask = new DrawTask(frame.getCanvas(), initCube());
+        DrawTask drawTask = new DrawTask(frame.getCanvas(), initCube(), initScreenPlane());
         timer.scheduleAtFixedRate(drawTask, 0, 1000 / Parameters.FRAME_RATE);
+    }
+
+
+    public static Screen initScreenPlane() {
+        CartesianPlane screenPlane = new CartesianPlane(Parameters.SCREEN_PLANE_VECTOR, -Parameters.ZOOM_FACTOR);
+        Point3D a = new Point3D();
+        Point3D b = new Point3D();
+        Point3D c = new Point3D();
+        Point3D d = new Point3D();
+
+        return new Screen(new Point3D(0, 0, 0), screenPlane, a, b, c, d);
     }
 
 
@@ -33,7 +45,7 @@ public class Main {
         return outputPoint;
     }
 
-
+/*
     public static Matrix initProjectionMatrix() {
         Matrix m = new Matrix();
 
@@ -48,7 +60,7 @@ public class Main {
 
         return m;
     }
-
+*/
 
     private static Mesh initCube() {
         Mesh cube = new Mesh();

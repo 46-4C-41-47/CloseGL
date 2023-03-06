@@ -42,6 +42,7 @@ public class Canvas extends JPanel {
         for (Mesh mesh: objects) {
             for (Triangle triangle: mesh.getTriangles()) {
                 drawTriangle(g, triangle);
+                //System.out.println(triangle);
             }
         }
     }
