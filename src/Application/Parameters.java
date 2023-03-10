@@ -4,7 +4,7 @@ import java.awt.Dimension;
 import java.awt.Color;
 
 public class Parameters {
-    static final Dimension FRAME_SIZE = new Dimension(600, 600);
+    static final Dimension FRAME_SIZE = new Dimension(1000, 563);
     static final int FRAME_RATE = 60;
     static final int SCALE_FACTOR = 10;
     static final float FOV = 90;
