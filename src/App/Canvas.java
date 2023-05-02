@@ -1,15 +1,16 @@
-package Application;
-
-import Geometry.Mesh;
-import Geometry.Triangle;
+package App;
 
 import javax.swing.JPanel;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-
 import java.util.List;
+
+import Math.Mesh;
+import Math.Triangle;
+import Math.Vertex;
+
 
 public class Canvas extends JPanel {
     private final BufferedImage screen;
@@ -23,9 +24,26 @@ public class Canvas extends JPanel {
 
     private void drawTriangle(Graphics g, Triangle t) {
         g.setColor(Parameters.FOREGROUND_COLOR);
-        g.drawLine((int) t.points[0].x, (int) t.points[0].y, (int) t.points[1].x, (int) t.points[1].y);
-        g.drawLine((int) t.points[1].x, (int) t.points[1].y, (int) t.points[2].x, (int) t.points[2].y);
-        g.drawLine((int) t.points[2].x, (int) t.points[2].y, (int) t.points[0].x, (int) t.points[0].y);
+        Vertex p1 = t.getPoints()[0], p2 = t.getPoints()[1], p3 = t.getPoints()[2];
+
+        g.drawLine(
+                (int) p1.getCoordinates()[0],
+                (int) p1.getCoordinates()[1],
+                (int) p2.getCoordinates()[0],
+                (int) p2.getCoordinates()[1]
+        );
+        g.drawLine(
+                (int) p2.getCoordinates()[0],
+                (int) p2.getCoordinates()[1],
+                (int) p3.getCoordinates()[0],
+                (int) p3.getCoordinates()[1]
+        );
+        g.drawLine(
+                (int) p3.getCoordinates()[0],
+                (int) p3.getCoordinates()[1],
+                (int) p1.getCoordinates()[0],
+                (int) p1.getCoordinates()[1]
+        );
     }
 
 
@@ -44,6 +62,18 @@ public class Canvas extends JPanel {
                 drawTriangle(g, triangle);
             }
         }
+    }
+
+
+    public void draw(Mesh mesh) {
+        Graphics g = screen.getGraphics();
+        clearScreen(g);
+
+        for (Triangle triangle: mesh.getTriangles()) {
+            drawTriangle(g, triangle);
+        }
+
+        repaint();
     }
 
 
