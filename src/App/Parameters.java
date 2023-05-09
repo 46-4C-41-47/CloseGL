@@ -3,26 +3,34 @@ package App;
 import java.awt.Color;
 import java.awt.Dimension;
 
-import Math.DoubleMatrix2D;
-import Math.Mesh;
-import Math.Vertex;
+import App.Math.DoubleMatrix2D;
+import App.Math.Mesh;
+import App.Math.Vertex;
 
 
 public class Parameters {
     static final int FRAME_RATE = 60;
-    static final Dimension FRAME_SIZE = new Dimension(1500, 844);
+    static final int FOV = 100;
+    static final int Z_FAR = 1000;
+    static final double Z_NEAR = 0.1;
+
+    static final Dimension FRAME_SIZE = new Dimension(1000, 564);
     static final Color FOREGROUND_COLOR = Color.WHITE;
     static final Color BACKGROUND_COLOR = Color.BLACK;
     static final Mesh CUBE = initCube();
-    //static final DoubleMatrix2D PROJECTION_MATRIX = initProjectionMatrix();
+    static final DoubleMatrix2D PROJECTION_MATRIX = getProjectionMatrix();
 
 
-    static DoubleMatrix2D initProjectionMatrix(double z) {
+    private static DoubleMatrix2D getProjectionMatrix() {
+        double v = 1/Math.tan(Math.toRadians(FOV) / 2);
+        double viewZone = Z_FAR - Z_NEAR;
+        double aspectRatio = (double) FRAME_SIZE.height / FRAME_SIZE.width;
+
         return new DoubleMatrix2D(new double[][]{
-                {1/z,   0, 0, 0},
-                {  0, 1/z, 0, 0},
-                {  0,   0, 1, 1},
-                {  0,   0, 1, 0}
+                {  aspectRatio * v, 0,                         0, 0},
+                {                0, v,                         0, 0},
+                {                0, 0,          Z_FAR / viewZone, 1},
+                {                0, 0, -Z_FAR * Z_NEAR /viewZone, 0}
         });
     }
 
