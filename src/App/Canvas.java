@@ -7,9 +7,9 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
-import Math.Mesh;
-import Math.Triangle;
-import Math.Vertex;
+import App.Math.Mesh;
+import App.Math.Triangle;
+import App.Math.Vertex;
 
 
 public class Canvas extends JPanel {
@@ -27,22 +27,22 @@ public class Canvas extends JPanel {
         Vertex p1 = t.getPoints()[0], p2 = t.getPoints()[1], p3 = t.getPoints()[2];
 
         g.drawLine(
-                (int) p1.getCoordinates()[0],
-                (int) p1.getCoordinates()[1],
-                (int) p2.getCoordinates()[0],
-                (int) p2.getCoordinates()[1]
+                (int) (p1.getCoordinates()[0]),
+                (int) (p1.getCoordinates()[1]),
+                (int) (p2.getCoordinates()[0]),
+                (int) (p2.getCoordinates()[1])
         );
         g.drawLine(
-                (int) p2.getCoordinates()[0],
-                (int) p2.getCoordinates()[1],
-                (int) p3.getCoordinates()[0],
-                (int) p3.getCoordinates()[1]
+                (int) (p2.getCoordinates()[0]),
+                (int) (p2.getCoordinates()[1]),
+                (int) (p3.getCoordinates()[0]),
+                (int) (p3.getCoordinates()[1])
         );
         g.drawLine(
-                (int) p3.getCoordinates()[0],
-                (int) p3.getCoordinates()[1],
-                (int) p1.getCoordinates()[0],
-                (int) p1.getCoordinates()[1]
+                (int) (p3.getCoordinates()[0]),
+                (int) (p3.getCoordinates()[1]),
+                (int) (p1.getCoordinates()[0]),
+                (int) (p1.getCoordinates()[1])
         );
     }
 
