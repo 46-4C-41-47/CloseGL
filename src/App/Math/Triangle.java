@@ -55,6 +55,18 @@ public class Triangle {
     }
 
 
+    public Vector getNormal() {
+        Vector A = new Vector(points[0], points[1]);
+        Vector B = new Vector(points[0], points[2]);
+
+        return new Vector(
+                (A.getCoordinates()[1] * B.getCoordinates()[2]) - (A.getCoordinates()[2] * B.getCoordinates()[1]),
+                (A.getCoordinates()[2] * B.getCoordinates()[0]) - (A.getCoordinates()[0] * B.getCoordinates()[2]),
+                (A.getCoordinates()[0] * B.getCoordinates()[1]) - (A.getCoordinates()[1] * B.getCoordinates()[0])
+        );
+    }
+
+
     @Override
     public String toString() {
         return points[0] + ", \n" + points[1] + ", \n" + points[2] + "\n";

@@ -1,9 +1,5 @@
 package App;
 
-import App.Math.Mesh;
-import App.Math.Triangle;
-import App.Math.Vertex;
-
 import java.util.Timer;
 
 

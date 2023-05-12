@@ -5,6 +5,7 @@ import java.awt.Dimension;
 
 import App.Math.DoubleMatrix2D;
 import App.Math.Mesh;
+import App.Math.Vector;
 import App.Math.Vertex;
 
 
@@ -13,6 +14,8 @@ public class Parameters {
     static final int FOV = 100;
     static final int Z_FAR = 1000;
     static final double Z_NEAR = 0.1;
+    static final Vertex Camera = new Vertex(0, 0, 0);
+    static final Vector Light = new Vector(0, 1, 0);
 
     static final Dimension FRAME_SIZE = new Dimension(1000, 564);
     static final Color FOREGROUND_COLOR = Color.WHITE;
@@ -23,14 +26,14 @@ public class Parameters {
 
     private static DoubleMatrix2D getProjectionMatrix() {
         double v = 1/Math.tan(Math.toRadians(FOV) / 2);
-        double viewZone = Z_FAR - Z_NEAR;
+        double viewZone = Z_FAR / (Z_FAR - Z_NEAR);
         double aspectRatio = (double) FRAME_SIZE.height / FRAME_SIZE.width;
 
         return new DoubleMatrix2D(new double[][]{
-                {  aspectRatio * v, 0,                         0, 0},
-                {                0, v,                         0, 0},
-                {                0, 0,          Z_FAR / viewZone, 1},
-                {                0, 0, -Z_FAR * Z_NEAR /viewZone, 0}
+                {  aspectRatio * v, 0,                  0, 0},
+                {                0, v,                  0, 0},
+                {                0, 0,           viewZone, 1},
+                {                0, 0, -Z_NEAR * viewZone, 0}
         });
     }
 
@@ -38,29 +41,28 @@ public class Parameters {
     private static Mesh initCube() {
         Mesh cube = new Mesh();
 
-        // NORTH
-        cube.add(new Vertex[]{new Vertex(-1, -1, -1), new Vertex( 1, -1, -1), new Vertex( 1,  1, -1)});
-        cube.add(new Vertex[]{new Vertex( 1,  1, -1), new Vertex(-1,  1, -1), new Vertex(-1, -1, -1)});
-
-        // SOUTH
-        cube.add(new Vertex[]{new Vertex(-1, -1,  1), new Vertex( 1, -1,  1), new Vertex( 1,  1,  1)});
-        cube.add(new Vertex[]{new Vertex( 1,  1,  1), new Vertex(-1,  1,  1), new Vertex(-1, -1,  1)});
-
-        // TOP
-        cube.add(new Vertex[]{new Vertex(-1, -1, -1), new Vertex( 1, -1, -1), new Vertex( 1, -1,  1)});
-        cube.add(new Vertex[]{new Vertex( 1, -1,  1), new Vertex(-1, -1,  1), new Vertex(-1, -1, -1)});
-
-        // BOTTOM
-        cube.add(new Vertex[]{new Vertex(-1,  1, -1), new Vertex( 1,  1, -1), new Vertex( 1,  1,  1)});
-        cube.add(new Vertex[]{new Vertex( 1,  1,  1), new Vertex(-1,  1,  1), new Vertex(-1,  1, -1)});
-
-        // WEST
-        cube.add(new Vertex[]{new Vertex(-1, -1, -1), new Vertex(-1, -1,  1), new Vertex(-1,  1,  1)});
-        cube.add(new Vertex[]{new Vertex(-1,  1,  1), new Vertex(-1,  1, -1), new Vertex(-1, -1, -1)});
+        cube.add(new Vertex[]{new Vertex(-1, -1, -1), new Vertex(-1,  1, -1), new Vertex( 1,  1, -1)});
+        cube.add(new Vertex[]{new Vertex(-1, -1, -1), new Vertex( 1,  1, -1), new Vertex( 1, -1, -1)});
 
         // EAST
-        cube.add(new Vertex[]{new Vertex( 1, -1,  1), new Vertex( 1, -1, -1), new Vertex( 1,  1, -1)});
-        cube.add(new Vertex[]{new Vertex( 1,  1, -1), new Vertex( 1,  1,  1), new Vertex( 1, -1,  1)});
+        cube.add(new Vertex[]{new Vertex( 1, -1, -1), new Vertex( 1,  1, -1), new Vertex( 1,  1,  1)});
+        cube.add(new Vertex[]{new Vertex( 1, -1, -1), new Vertex( 1,  1,  1), new Vertex( 1, -1,  1)});
+
+        // NORTH
+        cube.add(new Vertex[]{new Vertex( 1, -1,  1), new Vertex( 1,  1,  1), new Vertex(-1,  1,  1)});
+        cube.add(new Vertex[]{new Vertex( 1, -1,  1), new Vertex(-1,  1,  1), new Vertex(-1, -1,  1)});
+
+        // WEST
+        cube.add(new Vertex[]{new Vertex(-1, -1,  1), new Vertex(-1,  1,  1), new Vertex(-1,  1, -1)});
+        cube.add(new Vertex[]{new Vertex(-1, -1,  1), new Vertex(-1,  1, -1), new Vertex(-1, -1, -1)});
+
+        // TOP
+        cube.add(new Vertex[]{new Vertex(-1,  1, -1), new Vertex(-1,  1,  1), new Vertex( 1,  1,  1)});
+        cube.add(new Vertex[]{new Vertex(-1,  1, -1), new Vertex( 1,  1,  1), new Vertex( 1,  1, -1)});
+
+        // BOTTOM
+        cube.add(new Vertex[]{new Vertex( 1, -1,  1), new Vertex(-1, -1,  1), new Vertex(-1, -1, -1)});
+        cube.add(new Vertex[]{new Vertex( 1, -1,  1), new Vertex(-1, -1, -1), new Vertex( 1, -1, -1)});
 
         return cube;
     }

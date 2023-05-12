@@ -2,8 +2,7 @@ package App;
 
 import javax.swing.JPanel;
 
-import java.awt.Dimension;
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
@@ -19,6 +18,27 @@ public class Canvas extends JPanel {
     public Canvas(Dimension d) {
         super();
         screen = new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_ARGB);
+    }
+
+
+    private void fillTriangle(Graphics g, Triangle t) {
+        g.setColor(new Color(getRandomRGB()));
+
+        Polygon triangle = new Polygon(
+                new int[]{
+                        (int) t.getPoints()[0].getCoordinates()[0],
+                        (int) t.getPoints()[1].getCoordinates()[0],
+                        (int) t.getPoints()[2].getCoordinates()[0]
+                },
+                new int[]{
+                        (int) t.getPoints()[0].getCoordinates()[1],
+                        (int) t.getPoints()[1].getCoordinates()[1],
+                        (int) t.getPoints()[2].getCoordinates()[1]
+                },
+                3
+        );
+
+        g.fillPolygon(triangle);
     }
 
 
@@ -70,10 +90,20 @@ public class Canvas extends JPanel {
         clearScreen(g);
 
         for (Triangle triangle: mesh.getTriangles()) {
-            drawTriangle(g, triangle);
+            fillTriangle(g, triangle);
         }
 
         repaint();
+    }
+
+
+    public static int getRandomRGB() {
+        return (int) (Math.random() * 255) << 16 | (int) (Math.random() * 255) << 8 | (int) (Math.random() * 255);
+    }
+
+
+    public static int getRandomARGB() {
+        return 0xFF | (int) (Math.random() * 255) << 16 | (int) (Math.random() * 255) << 8 | (int) (Math.random() * 255);
     }
 
 

@@ -193,6 +193,23 @@ public class Mesh {
     }
 
 
+    public Mesh filter(Vertex CameraPosition) {
+        Mesh newMesh = new Mesh();
+
+        for (Triangle triangle : triangles) {
+            Vector camToPoint = new Vector(CameraPosition, triangle.getPoints()[0]);
+            double dotProduct = triangle.getNormal().getCoordinates()[0] * camToPoint.getCoordinates()[0] +
+                                triangle.getNormal().getCoordinates()[1] * camToPoint.getCoordinates()[1] +
+                                triangle.getNormal().getCoordinates()[2] * camToPoint.getCoordinates()[2];
+            if (dotProduct < 0) {
+                newMesh.add(triangle);
+            }
+        }
+
+        return newMesh;
+    }
+
+
     public Mesh toScreen(Dimension screenSize) {
         Mesh newMesh = new Mesh();
 
