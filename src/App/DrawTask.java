@@ -1,8 +1,6 @@
 package App;
 
 import App.Math.Mesh;
-import App.Math.Triangle;
-import App.Math.Vertex;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,37 +8,69 @@ import java.util.TimerTask;
 
 
 public class DrawTask extends TimerTask {
-    private Mesh cube;
+    private static final double ROTATION_SPEED = 2;
+    private final Frame frame;
     private final Canvas canvas;
-    private float elapsedTime = 0f;
-    private int frameCount = 0;
+    private double startingTime = 0, elapsedTime = 0;
+    private double fps = Parameters.FRAME_RATE, avgFps = Parameters.FRAME_RATE;
+    private Mesh object;
     private List<Mesh> objectsToDraw = new ArrayList<>();
 
 
-    public DrawTask(Canvas canvas, Mesh cube) {
-        this.canvas = canvas;
-        this.cube = cube;
-        objectsToDraw.add(this.cube);
+    public DrawTask(Frame frame, Mesh object) {
+        this.frame = frame;
+        this.canvas = frame.getCanvas();
+        this.object = object.rotateX(45).rotateY(45);
+        objectsToDraw.add(this.object);
+    }
+
+
+    public void rotateForward() {
+        object = object.rotateX(ROTATION_SPEED);
+    }
+
+
+    public void rotateBackward() {
+        object = object.rotateX(-ROTATION_SPEED);
+    }
+
+
+    public void rotateLeft() {
+        object = object.rotateY(ROTATION_SPEED);
+    }
+
+
+    public void rotateRight() {
+        object = object.rotateY(-ROTATION_SPEED);
+    }
+
+
+    public void rotateClockwise() {
+        object = object.rotateZ(ROTATION_SPEED);
+    }
+
+
+    public void rotateTrigonometric() {
+        object = object.rotateZ(-ROTATION_SPEED);
     }
 
 
     @Override
     public void run() {
-        // Write here something to run
-        elapsedTime += 1;
-        frameCount += 1;
+        startingTime = System.currentTimeMillis();
 
-        if (frameCount == Parameters.FRAME_RATE) {
-            frameCount = 0;
+        canvas.draw(object
+                .translate(2, 8)
+                .render(Parameters.Camera, Parameters.Light, Parameters.PROJECTION_MATRIX, Parameters.FRAME_SIZE)
+        );
+
+        avgFps = (avgFps + fps) / 2;
+        fps = 1000 / (System.currentTimeMillis() - startingTime);
+
+        if (1000 < fps) {
+            fps = 1000;
         }
 
-        canvas.draw(cube
-                .rotateX(elapsedTime * 0.398)
-                .rotateY(elapsedTime * 0.701)
-                .rotateZ(elapsedTime * 0.545)
-                .translate(2, 6)
-                .filter(Parameters.Camera)
-                .project(Parameters.PROJECTION_MATRIX).toScreen(Parameters.FRAME_SIZE)
-        );
+        frame.setTitle("FPS : " + String.format("%.2f", fps) + "     AVG : " + String.format("%.2f", avgFps));
     }
 }

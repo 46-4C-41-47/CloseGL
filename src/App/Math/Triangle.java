@@ -3,7 +3,9 @@ package App.Math;
 
 public class Triangle {
     private static final int POINTS_SIZE = 3;
+    private Vector normal;
     private Vertex[] points;
+    public double exposition = 0;
 
 
     public Triangle() {
@@ -55,7 +57,7 @@ public class Triangle {
     }
 
 
-    public Vector getNormal() {
+    private Vector computeNormal() {
         Vector A = new Vector(points[0], points[1]);
         Vector B = new Vector(points[0], points[2]);
 
@@ -64,6 +66,20 @@ public class Triangle {
                 (A.getCoordinates()[2] * B.getCoordinates()[0]) - (A.getCoordinates()[0] * B.getCoordinates()[2]),
                 (A.getCoordinates()[0] * B.getCoordinates()[1]) - (A.getCoordinates()[1] * B.getCoordinates()[0])
         );
+    }
+
+
+    public Vector getNormal() {
+        if (normal == null) {
+            normal = computeNormal();
+        }
+
+        return normal;
+    }
+
+
+    public double getExposition(Vector lightDirection) {
+        return (getNormal().getNormalize().dotProduct(lightDirection) + 1) / 2;
     }
 
 

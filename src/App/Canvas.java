@@ -22,7 +22,13 @@ public class Canvas extends JPanel {
 
 
     private void fillTriangle(Graphics g, Triangle t) {
-        g.setColor(new Color(getRandomRGB()));
+        double scaledExposition = t.exposition * 0.75 + 0.25;
+
+        g.setColor(new Color(
+                (int) (0xFF * scaledExposition),
+                (int) (0xFF * scaledExposition),
+                (int) (0xFF * scaledExposition)
+        ));
 
         Polygon triangle = new Polygon(
                 new int[]{

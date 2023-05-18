@@ -1,9 +1,8 @@
 package App.Math;
 
-import App.Parameters;
-
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -24,15 +23,20 @@ public class Mesh {
     }
 
 
+    public Mesh(List<Triangle> inTriangles) {
+        triangles = inTriangles;
+    }
+
+
     public void add(Triangle triangle) {
         if (getDimension() == NO_DIMENSION) {
             triangles.add(triangle);
+            dimension = triangle.getDimension();
 
         } else if (this.getDimension() == triangle.getDimension()) {
             triangles.add(triangle);
 
         } else {
-            System.out.println(this.getDimension() + ", " + triangle.getDimension());
             throw new UnsupportedOperationException("All triangle of a mesh should have the same dimension");
         }
     }
@@ -45,23 +49,7 @@ public class Mesh {
 
 
     public int getDimension() {
-        if (triangles.size() == 0) {
-            return NO_DIMENSION;
-
-        } else {
-            if (dimension == NO_DIMENSION) {
-                int dimension = triangles.get(0).getDimension();
-
-                for (Triangle triangle : triangles) {
-                    if (triangle.getDimension() != dimension) {
-                        throw new UnsupportedOperationException("All points of a triangle should have the same dimension");
-                    }
-                }
-            }
-
-            return dimension;
-        }
-
+        return dimension;
     }
 
 
@@ -108,37 +96,33 @@ public class Mesh {
     }
 
 
-    public Mesh project(DoubleMatrix2D projectionMatrix) {
-        Mesh projectedMesh = new Mesh();
+    public Triangle project(DoubleMatrix2D projectionMatrix, Triangle triangle) {
+        Vertex[] points = new Vertex[3];
 
-        for (Triangle triangle : triangles) {
-            Vertex[] points = new Vertex[3];
+        for (int i = 0; i < points.length; i++) {
+            DoubleMatrix2D vertex = DoubleMatrix2D.multiplyMatrix(
+                    triangle.getPoints()[i].toMatrix(4),
+                    projectionMatrix
+            );
 
-            for (int i = 0; i < points.length; i++) {
-                DoubleMatrix2D vertex = DoubleMatrix2D.multiplyMatrix(
-                        triangle.getPoints()[i].toMatrix(4),
-                        projectionMatrix
+            if (vertex.matrix[0][3] != 0) {
+                points[i] = new Vertex(
+                        vertex.matrix[0][0] / vertex.matrix[0][3],
+                        vertex.matrix[0][1] / vertex.matrix[0][3],
+                        vertex.matrix[0][2] / vertex.matrix[0][3],
+                        vertex.matrix[0][3]
                 );
 
-                if (vertex.matrix[0][3] != 0) {
-                    points[i] = new Vertex(
-                            vertex.matrix[0][0] / vertex.matrix[0][3],
-                            vertex.matrix[0][1] / vertex.matrix[0][3],
-                            vertex.matrix[0][2] / vertex.matrix[0][3],
-                            vertex.matrix[0][3]
-                    );
-
-                } else {
-                    points[i] = new Vertex(vertex);
-                }
+            } else {
+                points[i] = new Vertex(vertex);
             }
-
-            Triangle newTriangle = new Triangle(points);
-
-            projectedMesh.add(newTriangle);
         }
 
-        return projectedMesh;
+        Triangle projectedTriangle = new Triangle(points);
+        projectedTriangle.exposition = triangle.exposition;
+
+
+        return projectedTriangle;
     }
 
 
@@ -193,46 +177,68 @@ public class Mesh {
     }
 
 
-    public Mesh filter(Vertex CameraPosition) {
+    public Mesh render(Vertex CameraPosition, Vector lightDirection, DoubleMatrix2D projectionMatrix, Dimension frameSize) {
         Mesh newMesh = new Mesh();
 
         for (Triangle triangle : triangles) {
             Vector camToPoint = new Vector(CameraPosition, triangle.getPoints()[0]);
-            double dotProduct = triangle.getNormal().getCoordinates()[0] * camToPoint.getCoordinates()[0] +
-                                triangle.getNormal().getCoordinates()[1] * camToPoint.getCoordinates()[1] +
-                                triangle.getNormal().getCoordinates()[2] * camToPoint.getCoordinates()[2];
+            double dotProduct = triangle.getNormal().dotProduct(camToPoint);
+
             if (dotProduct < 0) {
-                newMesh.add(triangle);
+                Triangle newTriangle = new Triangle(triangle);
+                newTriangle.exposition = triangle.getExposition(lightDirection);
+                newMesh.add(toScreen(frameSize, project(projectionMatrix, newTriangle)));
             }
         }
+
+        newMesh.sortTriangles();
 
         return newMesh;
     }
 
 
-    public Mesh toScreen(Dimension screenSize) {
-        Mesh newMesh = new Mesh();
+    private void sortTriangles() {
+        triangles.sort(new Comparator<Triangle>() {
+            @Override
+            public int compare(Triangle o1, Triangle o2) {
+                double o1Distance = (
+                        o1.getPoints()[0].getCoordinates()[2] +
+                        o1.getPoints()[0].getCoordinates()[2] +
+                        o1.getPoints()[0].getCoordinates()[2]) / 3;
 
-        for (Triangle triangle : triangles) {
-            newMesh.add(
-                    new Triangle(
-                        new Vertex(
-                                ((triangle.getPoints()[0].getCoordinates()[0] + 1) * (double) screenSize.width / 2),
-                                ((triangle.getPoints()[0].getCoordinates()[1] + 1) * (double) screenSize.height / 2)
-                        ),
-                        new Vertex(
-                                ((triangle.getPoints()[1].getCoordinates()[0] + 1) * (double) screenSize.width / 2),
-                                ((triangle.getPoints()[1].getCoordinates()[1] + 1) * (double) screenSize.height / 2)
-                        ),
-                        new Vertex(
-                                ((triangle.getPoints()[2].getCoordinates()[0] + 1) * (double) screenSize.width / 2),
-                                ((triangle.getPoints()[2].getCoordinates()[1] + 1) * (double) screenSize.height / 2)
-                        )
-                    )
-            );
-        }
+                double o2Distance = (
+                        o2.getPoints()[0].getCoordinates()[2] +
+                        o2.getPoints()[0].getCoordinates()[2] +
+                        o2.getPoints()[0].getCoordinates()[2]) / 3;
 
-        return newMesh;
+                return Double.compare(o2Distance, o1Distance);
+            }
+        });
+    }
+
+
+    public Triangle toScreen(Dimension screenSize, Triangle triangle) {
+        Triangle newTriangle = new Triangle(
+                new Vertex(
+                        ((triangle.getPoints()[0].getCoordinates()[0] + 1) * (double) screenSize.width / 2),
+                        ((triangle.getPoints()[0].getCoordinates()[1] + 1) * (double) screenSize.height / 2),
+                        triangle.getPoints()[0].getCoordinates()[2]
+                ),
+                new Vertex(
+                        ((triangle.getPoints()[1].getCoordinates()[0] + 1) * (double) screenSize.width / 2),
+                        ((triangle.getPoints()[1].getCoordinates()[1] + 1) * (double) screenSize.height / 2),
+                        triangle.getPoints()[1].getCoordinates()[2]
+                ),
+                new Vertex(
+                        ((triangle.getPoints()[2].getCoordinates()[0] + 1) * (double) screenSize.width / 2),
+                        ((triangle.getPoints()[2].getCoordinates()[1] + 1) * (double) screenSize.height / 2),
+                        triangle.getPoints()[2].getCoordinates()[2]
+                )
+        );
+
+        newTriangle.exposition = triangle.exposition;
+
+        return newTriangle;
     }
 
 

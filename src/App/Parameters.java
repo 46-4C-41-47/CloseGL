@@ -15,13 +15,15 @@ public class Parameters {
     static final int Z_FAR = 1000;
     static final double Z_NEAR = 0.1;
     static final Vertex Camera = new Vertex(0, 0, 0);
-    static final Vector Light = new Vector(0, 1, 0);
+    static final Vector Light = new Vector(0, -1, -0.2).getNormalize();
 
     static final Dimension FRAME_SIZE = new Dimension(1000, 564);
     static final Color FOREGROUND_COLOR = Color.WHITE;
     static final Color BACKGROUND_COLOR = Color.BLACK;
     static final Mesh CUBE = initCube();
     static final DoubleMatrix2D PROJECTION_MATRIX = getProjectionMatrix();
+
+    static final String pathToObj = ".\\res\\ship.obj";
 
 
     private static DoubleMatrix2D getProjectionMatrix() {
