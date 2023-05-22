@@ -10,22 +10,14 @@ import App.Math.Vertex;
 
 
 public class Parameters {
-    static final int FRAME_RATE = 60;
-    static final int FOV = 100;
+
+    // SCENE
+    static final int FRAME_RATE = 75;
+    static final int FOV = 90;
     static final int Z_FAR = 1000;
     static final double Z_NEAR = 0.1;
     static final Vertex Camera = new Vertex(0, 0, 0);
-    static final Vector Light = new Vector(0, -1, -0.2).getNormalize();
-
-    static final Dimension FRAME_SIZE = new Dimension(1000, 564);
-    static final Color FOREGROUND_COLOR = Color.WHITE;
-    static final Color BACKGROUND_COLOR = Color.BLACK;
-    static final Mesh CUBE = initCube();
-    static final DoubleMatrix2D PROJECTION_MATRIX = getProjectionMatrix();
-
-    static final String pathToObj = ".\\res\\ship.obj";
-
-
+    static final Vector Light = new Vector(0, 1, 0.2).getNormalize();
     private static DoubleMatrix2D getProjectionMatrix() {
         double v = 1/Math.tan(Math.toRadians(FOV) / 2);
         double viewZone = Z_FAR / (Z_FAR - Z_NEAR);
@@ -40,6 +32,24 @@ public class Parameters {
     }
 
 
+    // PLAYER
+    static final double MOVEMENT_SPEED = 0.05d;
+    static final double VERTICAL_MOUSE_SENSITIVITY = 4d;
+    static final double HORIZONTAL_MOUSE_SENSITIVITY = 7d;
+
+
+    // GRAPHICAL ENVIRONMENT
+    static final Dimension FRAME_SIZE = new Dimension(1500, 844);
+    static final Color OBJECTS_COLOR = Color.WHITE;
+    static final Color BACKGROUND_COLOR = Color.BLACK;
+    static final Color FRAME_COLOR = Color.BLACK;
+    static final boolean DRAW_FRAME = false;
+
+
+    // OBJECTS
+    static final Mesh CUBE = initCube();
+    static final DoubleMatrix2D PROJECTION_MATRIX = getProjectionMatrix();
+    static final String pathToObj = ".\\res\\axis.obj";
     private static Mesh initCube() {
         Mesh cube = new Mesh();
 

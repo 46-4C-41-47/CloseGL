@@ -1,8 +1,11 @@
 package App;
 
+import App.ControlHandlers.KeyEventHandler;
+
 import javax.swing.JFrame;
+import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
 import java.util.Timer;
 
 
@@ -13,14 +16,6 @@ public class Frame extends JFrame {
 
     public static void main(String[] args) {
         new Frame();
-        //ObjReader objReader = new ObjReader(Parameters.pathToObj);
-        //System.out.println(objReader.getObject());
-
-        /*String s = "2909 2921 2939";
-
-        for (String str : s.split(" ")) {
-            System.out.println(Integer.parseInt(str));
-        }*/
     }
 
 
@@ -33,44 +28,23 @@ public class Frame extends JFrame {
         setResizable(false);
         setLocationRelativeTo(null);
         createTask();
-        addKeyListener(createKeyListener());
-        setTitle("title");
+        addKeyListener(new KeyEventHandler(task, KeyEvent.VK_Z));
+        addKeyListener(new KeyEventHandler(task, KeyEvent.VK_Q));
+        addKeyListener(new KeyEventHandler(task, KeyEvent.VK_S));
+        addKeyListener(new KeyEventHandler(task, KeyEvent.VK_D));
+        addKeyListener(new KeyEventHandler(task, KeyEvent.VK_SPACE));
+        addKeyListener(new KeyEventHandler(task, KeyEvent.VK_SHIFT));
+        addKeyListener(new KeyEventHandler(task, KeyEvent.VK_ESCAPE));
         add(canvas);
 
+        BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+
+        Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
+                cursorImg, new Point(0, 0), "blank cursor");
+
+        getContentPane().setCursor(blankCursor);
+
         setVisible(true);
-    }
-
-
-    private KeyListener createKeyListener() {
-        return new KeyListener() {
-            @Override
-            public void keyPressed(KeyEvent event) {
-                if (event.getKeyCode() == KeyEvent.VK_Z) {
-                    task.rotateForward();
-
-                } else if (event.getKeyCode() == KeyEvent.VK_Q) {
-                    task.rotateLeft();
-
-                } else if (event.getKeyCode() == KeyEvent.VK_S) {
-                    task.rotateBackward();
-
-                } else if (event.getKeyCode() == KeyEvent.VK_D) {
-                    task.rotateRight();
-
-                } else if (event.getKeyCode() == KeyEvent.VK_A) {
-                    task.rotateClockwise();
-
-                } else if (event.getKeyCode() == KeyEvent.VK_E) {
-                    task.rotateTrigonometric();
-                }
-            }
-
-            @Override
-            public void keyReleased(KeyEvent event) {}
-
-            @Override
-            public void keyTyped(KeyEvent event) {}
-        };
     }
 
 

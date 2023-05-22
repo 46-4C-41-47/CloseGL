@@ -25,9 +25,9 @@ public class Canvas extends JPanel {
         double scaledExposition = t.exposition * 0.75 + 0.25;
 
         g.setColor(new Color(
-                (int) (0xFF * scaledExposition),
-                (int) (0xFF * scaledExposition),
-                (int) (0xFF * scaledExposition)
+                (int) (Parameters.OBJECTS_COLOR.getRed()   * scaledExposition),
+                (int) (Parameters.OBJECTS_COLOR.getGreen() * scaledExposition),
+                (int) (Parameters.OBJECTS_COLOR.getBlue()  * scaledExposition)
         ));
 
         Polygon triangle = new Polygon(
@@ -49,7 +49,7 @@ public class Canvas extends JPanel {
 
 
     private void drawTriangle(Graphics g, Triangle t) {
-        g.setColor(Parameters.FOREGROUND_COLOR);
+        g.setColor(Parameters.FRAME_COLOR);
         Vertex p1 = t.getPoints()[0], p2 = t.getPoints()[1], p3 = t.getPoints()[2];
 
         g.drawLine(
@@ -95,8 +95,16 @@ public class Canvas extends JPanel {
         Graphics g = screen.getGraphics();
         clearScreen(g);
 
-        for (Triangle triangle: mesh.getTriangles()) {
-            fillTriangle(g, triangle);
+        if (Parameters.DRAW_FRAME) {
+            for (Triangle triangle: mesh.getTriangles()) {
+                fillTriangle(g, triangle);
+                drawTriangle(g, triangle);
+            }
+
+        } else {
+            for (Triangle triangle: mesh.getTriangles()) {
+                fillTriangle(g, triangle);
+            }
         }
 
         repaint();

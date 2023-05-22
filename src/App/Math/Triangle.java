@@ -83,6 +83,31 @@ public class Triangle {
     }
 
 
+    public Triangle rotateX(double theta) {
+        return new Triangle(
+                new Vertex(DoubleMatrix2D.rotateX(points[0].toMatrix(3), theta)),
+                new Vertex(DoubleMatrix2D.rotateX(points[1].toMatrix(3), theta)),
+                new Vertex(DoubleMatrix2D.rotateX(points[2].toMatrix(3), theta))
+        );
+    }
+
+
+    public Triangle rotateY(double theta) {
+        return new Triangle(
+                new Vertex(DoubleMatrix2D.rotateY(points[0].toMatrix(3), theta)),
+                new Vertex(DoubleMatrix2D.rotateY(points[1].toMatrix(3), theta)),
+                new Vertex(DoubleMatrix2D.rotateY(points[2].toMatrix(3), theta))
+        );
+    }
+
+
+    public boolean isBehindNearPlane(double planeOffset) {
+        return points[0].getCoordinates()[2] < -planeOffset ||
+               points[1].getCoordinates()[2] < -planeOffset ||
+               points[2].getCoordinates()[2] < -planeOffset;
+    }
+
+
     @Override
     public String toString() {
         return points[0] + ", \n" + points[1] + ", \n" + points[2] + "\n";
