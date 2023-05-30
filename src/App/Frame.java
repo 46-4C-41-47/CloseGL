@@ -1,6 +1,8 @@
 package App;
 
 import App.ControlHandlers.KeyEventHandler;
+import App.J3D.Camera;
+import App.Math.*;
 
 import javax.swing.JFrame;
 import java.awt.*;
@@ -58,5 +60,12 @@ public class Frame extends JFrame {
 
     public Canvas getCanvas() {
         return canvas;
+    }
+
+
+    public static <T> void printArray(T[] array) {
+        for (T element : array) {
+            System.out.println(element);
+        }
     }
 }

@@ -58,12 +58,11 @@ public class DoubleMatrix2D {
 
 
     public static DoubleMatrix2D rotateX(DoubleMatrix2D vertex, double angle) {
-        double theta = Math.toRadians(angle);
-
         DoubleMatrix2D rotationMatrix = new DoubleMatrix2D(new double[][]{
-                {1,               0,                0},
-                {0, Math.cos(theta), -Math.sin(theta)},
-                {0, Math.sin(theta),  Math.cos(theta)}
+                {1,               0,                0, 0},
+                {0, Math.cos(angle), -Math.sin(angle), 0},
+                {0, Math.sin(angle),  Math.cos(angle), 0},
+                {0,               0,                0, 1}
         });
 
         return multiplyMatrix(vertex, rotationMatrix);
@@ -71,12 +70,11 @@ public class DoubleMatrix2D {
 
 
     public static DoubleMatrix2D rotateY(DoubleMatrix2D vertex, double angle) {
-        double theta = Math.toRadians(angle);
-
         DoubleMatrix2D rotationMatrix = new DoubleMatrix2D(new double[][]{
-                { Math.cos(theta), 0, Math.sin(theta)},
-                {               0, 1,               0},
-                {-Math.sin(theta), 0, Math.cos(theta)}
+                { Math.cos(angle), 0, Math.sin(angle), 0},
+                {               0, 1,               0, 0},
+                {-Math.sin(angle), 0, Math.cos(angle), 0},
+                {               0, 0,               0, 1}
         });
 
         return multiplyMatrix(vertex, rotationMatrix);
@@ -84,12 +82,11 @@ public class DoubleMatrix2D {
 
 
     public static DoubleMatrix2D rotateZ(DoubleMatrix2D vertex, double angle) {
-        double theta = Math.toRadians(angle);
-
         DoubleMatrix2D rotationMatrix = new DoubleMatrix2D(new double[][]{
-                {Math.cos(theta), -Math.sin(theta), 0},
-                {Math.sin(theta),  Math.cos(theta), 0},
-                {              0,                0, 1}
+                {Math.cos(angle), -Math.sin(angle), 0, 0},
+                {Math.sin(angle),  Math.cos(angle), 0, 0},
+                {              0,                0, 1, 0},
+                {              0,                0, 0, 1}
         });
 
         return multiplyMatrix(vertex, rotationMatrix);

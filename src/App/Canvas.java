@@ -6,8 +6,10 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
-import App.Math.Mesh;
+import App.J3D.Mesh;
+import App.Math.Plane;
 import App.Math.Triangle;
+import App.Math.Vector;
 import App.Math.Vertex;
 
 
@@ -21,7 +23,7 @@ public class Canvas extends JPanel {
     }
 
 
-    private void fillTriangle(Graphics g, Triangle t) {
+    private void fillTriangle(Graphics2D g, Triangle t) {
         double scaledExposition = t.exposition * 0.75 + 0.25;
 
         g.setColor(new Color(
@@ -31,16 +33,8 @@ public class Canvas extends JPanel {
         ));
 
         Polygon triangle = new Polygon(
-                new int[]{
-                        (int) t.getPoints()[0].getCoordinates()[0],
-                        (int) t.getPoints()[1].getCoordinates()[0],
-                        (int) t.getPoints()[2].getCoordinates()[0]
-                },
-                new int[]{
-                        (int) t.getPoints()[0].getCoordinates()[1],
-                        (int) t.getPoints()[1].getCoordinates()[1],
-                        (int) t.getPoints()[2].getCoordinates()[1]
-                },
+                new int[]{(int) t.getPoints()[0].x, (int) t.getPoints()[1].x, (int) t.getPoints()[2].x},
+                new int[]{(int) t.getPoints()[0].y, (int) t.getPoints()[1].y, (int) t.getPoints()[2].y},
                 3
         );
 
@@ -48,28 +42,19 @@ public class Canvas extends JPanel {
     }
 
 
-    private void drawTriangle(Graphics g, Triangle t) {
+    private void drawTriangle(Graphics2D g, Triangle t) {
         g.setColor(Parameters.FRAME_COLOR);
         Vertex p1 = t.getPoints()[0], p2 = t.getPoints()[1], p3 = t.getPoints()[2];
 
-        g.drawLine(
-                (int) (p1.getCoordinates()[0]),
-                (int) (p1.getCoordinates()[1]),
-                (int) (p2.getCoordinates()[0]),
-                (int) (p2.getCoordinates()[1])
-        );
-        g.drawLine(
-                (int) (p2.getCoordinates()[0]),
-                (int) (p2.getCoordinates()[1]),
-                (int) (p3.getCoordinates()[0]),
-                (int) (p3.getCoordinates()[1])
-        );
-        g.drawLine(
-                (int) (p3.getCoordinates()[0]),
-                (int) (p3.getCoordinates()[1]),
-                (int) (p1.getCoordinates()[0]),
-                (int) (p1.getCoordinates()[1])
-        );
+        g.drawLine((int) (p1.x), (int) (p1.y), (int) (p2.x), (int) (p2.y));
+        g.drawLine((int) (p2.x), (int) (p2.y), (int) (p3.x), (int) (p3.y));
+        g.drawLine((int) (p3.x), (int) (p3.y), (int) (p1.x), (int) (p1.y));
+    }
+
+
+    private void drawCrossHair(Graphics2D g) {
+        g.setColor(Color.WHITE);
+        g.fillOval(Parameters.FRAME_SIZE.width / 2, Parameters.FRAME_SIZE.height / 2, 1, 2);
     }
 
 
@@ -80,7 +65,7 @@ public class Canvas extends JPanel {
 
 
     public void draw(List<Mesh> objects) {
-        Graphics g = screen.getGraphics();
+        Graphics2D g = (Graphics2D) screen.getGraphics();
         clearScreen(g);
 
         for (Mesh mesh: objects) {
@@ -92,19 +77,23 @@ public class Canvas extends JPanel {
 
 
     public void draw(Mesh mesh) {
-        Graphics g = screen.getGraphics();
+        Graphics2D g = (Graphics2D) screen.getGraphics();
         clearScreen(g);
 
-        if (Parameters.DRAW_FRAME) {
-            for (Triangle triangle: mesh.getTriangles()) {
-                fillTriangle(g, triangle);
-                drawTriangle(g, triangle);
-            }
+        Mesh clippedMesh = mesh.clipOnScreen(new Plane[]{
+                new Plane(new Vector( 1,  0, 0), new Vertex(0, 0, 0)),
+                new Plane(new Vector(-1,  0, 0), new Vertex(Parameters.FRAME_SIZE.width, 0, 0)),
+                new Plane(new Vector( 0,  1, 0), new Vertex(0, 0, 0)),
+                new Plane(new Vector( 0, -1, 0), new Vertex(0, Parameters.FRAME_SIZE.height - 39, 0)),
+        });
 
-        } else {
-            for (Triangle triangle: mesh.getTriangles()) {
-                fillTriangle(g, triangle);
-            }
+        for (Triangle triangle: clippedMesh.getTriangles()) {
+            fillTriangle(g, triangle);
+
+            if (Parameters.DRAW_FRAME)
+                drawTriangle(g, triangle);
+
+            drawCrossHair(g);
         }
 
         repaint();

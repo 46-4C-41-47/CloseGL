@@ -1,102 +1,95 @@
 package App.Math;
 
 public class Vertex {
-    private static final int EMPTY_DIMENSION_VALUE = 1;
-    private final double[] coordinates;
+    public double x, y, z, w;
 
 
-    public Vertex(double...values) {
-        coordinates = values;
+    public Vertex() {
+        x = 0;
+        y = 0;
+        z = 0;
+        w = 0;
+    }
+
+
+    public Vertex(Vertex v) {
+        x = v.x;
+        y = v.y;
+        z = v.z;
+        w = v.w;
+    }
+
+
+    public Vertex(double x, double y, double z, double w){
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.w = w;
+    }
+
+
+    public Vertex(double x, double y, double z){
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.w = 0;
     }
 
 
     public Vertex(DoubleMatrix2D matrix) {
-        if (matrix.height == 1) {
-            coordinates = matrix.matrix[0];
+        if (matrix.height == 1 && matrix.width == 4) {
+            x = matrix.matrix[0][0];
+            y = matrix.matrix[0][1];
+            z = matrix.matrix[0][2];
+            w = matrix.matrix[0][3];
 
-        } else if (matrix.width == 1) {
-            double[] values = new double[matrix.height];
-
-            for (int i = 0; i < matrix.height; i++) {
-                values[i] = matrix.matrix[i][1];
-            }
-
-            coordinates = values;
+        } else if (matrix.width == 1 && matrix.height == 4) {
+            x = matrix.matrix[0][0];
+            y = matrix.matrix[1][0];
+            z = matrix.matrix[2][0];
+            w = matrix.matrix[3][0];
 
         } else {
-            throw new IllegalArgumentException("Only matrix in line or column can be converted to a Vertex object");
+            throw new IllegalArgumentException("Only matrix in line or column of length 4 can be converted to a Vertex object");
         }
     }
 
 
-    public Vertex(Vertex vertex) {
-        coordinates = vertex.getCoordinates();
+    public Vertex translateX(double offset) {return new Vertex(x + offset, y, z, w);}
+
+
+    public Vertex translateY(double offset) {return new Vertex(x, y + offset, z, w);}
+
+
+    public Vertex translateZ(double offset) {return new Vertex(x, y, z + offset, w);}
+
+
+    public void translate(Vector vector, double offset) {
+        Vector normalizedVector = vector.normalize();
+
+        x += normalizedVector.x * offset;
+        y += normalizedVector.y * offset;
+        z += normalizedVector.z * offset;
     }
 
 
-    public int getDimension() {
-        return coordinates.length;
+    public Vertex plus(Vertex v) {
+        return new Vertex(x + v.x, y + v.y, z + v.z, v.w);
     }
 
 
-    public double[] getCoordinates() {
-        return coordinates;
+    public Vector toVector() {
+        return new Vector(x, y, z);
     }
 
 
-    public Vertex scaleVertex(double scaleFactor) {
-        double[] newCoordinates = new double[coordinates.length];
-
-        for (int i = 0; i < coordinates.length; i++) {
-            newCoordinates[i] = coordinates[i] * scaleFactor;
-        }
-
-        return new Vertex(newCoordinates);
-    }
-
-
-    public Vertex translate(int dimension, double shiftValue) {
-        if (coordinates.length <= dimension) {
-            throw new IllegalArgumentException();
-        }
-
-        double[] newCoordinates = new double[coordinates.length];
-        System.arraycopy(coordinates, 0, newCoordinates, 0, coordinates.length);
-
-        newCoordinates[dimension] = coordinates[dimension] + shiftValue;
-
-        return new Vertex(newCoordinates);
-    }
-
-
-    public DoubleMatrix2D toMatrix(int matrixDimension) {
-        double[] newCoordinates = new double[matrixDimension];
-
-        for (int i = 0; i < newCoordinates.length; i++) {
-            if (i < coordinates.length) {
-                newCoordinates[i] = coordinates[i];
-
-            } else {
-                newCoordinates[i] = EMPTY_DIMENSION_VALUE;
-            }
-        }
-
-        return new DoubleMatrix2D(new double[][]{newCoordinates});
+    public DoubleMatrix2D toMatrix() {
+        return new DoubleMatrix2D(new double[][]{{x, y, z, w}});
     }
 
 
     @Override
     public String toString() {
-        String str = "";
-
-        for (int i = 0; i < coordinates.length; i++) {
-            str += coordinates[i];
-
-            if (i != coordinates.length - 1) {
-                str += ", ";
-            }
-        }
-
-        return str;
+        return "Vertex : (" + x + ", " + y + ", " + z + ", " + w + ")";
     }
 }

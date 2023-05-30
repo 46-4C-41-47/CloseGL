@@ -1,6 +1,6 @@
 package App;
 
-import App.Math.Mesh;
+import App.J3D.Mesh;
 import App.Math.Triangle;
 import App.Math.Vertex;
 

@@ -1,6 +1,6 @@
 package App.Math;
 
-import App.Parameters;
+import App.Camera;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -10,8 +10,7 @@ import java.util.List;
 
 public class Mesh {
     private static final int NO_DIMENSION = -1;
-    private List<Triangle> triangles;
-    private int dimension = NO_DIMENSION;
+    private List<Triangle3D> triangles;
 
 
     public Mesh() {
@@ -25,50 +24,32 @@ public class Mesh {
     }
 
 
-    public Mesh(List<Triangle> inTriangles) {
+    public Mesh(List<Triangle3D> inTriangles) {
         triangles = inTriangles;
     }
 
 
-    public void add(Triangle triangle) {
-        if (getDimension() == NO_DIMENSION) {
-            triangles.add(triangle);
-            dimension = triangle.getDimension();
-
-        } else if (this.getDimension() == triangle.getDimension()) {
-            triangles.add(triangle);
-
-        } else {
-            throw new UnsupportedOperationException("All triangle of a mesh should have the same dimension");
-        }
-    }
-
-
-    public void add(Vertex[] points) {
-        Triangle triangle = new Triangle(points);
+    public void add(Triangle3D triangle) {
         triangles.add(triangle);
     }
 
 
-    public int getDimension() {
-        return dimension;
+    public void add(Vertex3D[] points) {
+        Triangle3D triangle = new Triangle3D(points);
+        triangles.add(triangle);
     }
 
 
     public void remove(int index) {
         triangles.remove(index);
-
-        if (triangles.size() == 0) {
-            dimension = NO_DIMENSION;
-        }
     }
 
 
     public Mesh scale(double scaleFactor) {
         Mesh newMesh = new Mesh();
 
-        for (Triangle triangle : triangles) {
-            Triangle newTriangle = new Triangle(
+        for (Triangle3D triangle : triangles) {
+            Triangle3D newTriangle = new Triangle3D(
                     triangle.getPoints()[0].scaleVertex(scaleFactor),
                     triangle.getPoints()[1].scaleVertex(scaleFactor),
                     triangle.getPoints()[2].scaleVertex(scaleFactor)
@@ -81,30 +62,44 @@ public class Mesh {
     }
 
 
-    public void translate(int dimension, double shiftValue) {
-        for (int i = 0; i < triangles.size(); i++) {
-            triangles.set(i,
-                    new Triangle(
-                            triangles.get(i).getPoints()[0].translate(dimension, shiftValue),
-                            triangles.get(i).getPoints()[1].translate(dimension, shiftValue),
-                            triangles.get(i).getPoints()[2].translate(dimension, shiftValue)
-                    )
-            );
+    public void translateX(double shiftValue) {
+        for (Triangle3D triangle : triangles) {
+            triangle.getPoints()[0].x += shiftValue;
+            triangle.getPoints()[1].x += shiftValue;
+            triangle.getPoints()[2].x += shiftValue;
         }
     }
 
 
-    private Triangle project(DoubleMatrix2D projectionMatrix, Triangle triangle) {
-        Vertex[] points = new Vertex[3];
+    public void translateY(double shiftValue) {
+        for (Triangle3D triangle : triangles) {
+            triangle.getPoints()[0].y += shiftValue;
+            triangle.getPoints()[1].y += shiftValue;
+            triangle.getPoints()[2].y += shiftValue;
+        }
+    }
+
+
+    public void translateZ(double shiftValue) {
+        for (Triangle3D triangle : triangles) {
+            triangle.getPoints()[0].z += shiftValue;
+            triangle.getPoints()[1].z += shiftValue;
+            triangle.getPoints()[2].z += shiftValue;
+        }
+    }
+
+
+    private Triangle3D project(DoubleMatrix2D projectionMatrix, Triangle3D triangle) {
+        Vertex3D[] points = new Vertex3D[3];
 
         for (int i = 0; i < points.length; i++) {
             DoubleMatrix2D vertex = DoubleMatrix2D.multiplyMatrix(
-                    triangle.getPoints()[i].toMatrix(4),
+                    triangle.getPoints()[i].toMatrix(),
                     projectionMatrix
             );
 
             if (vertex.matrix[0][3] != 0) {
-                points[i] = new Vertex(
+                points[i] = new Vertex3D(
                         vertex.matrix[0][0] / vertex.matrix[0][3],
                         vertex.matrix[0][1] / vertex.matrix[0][3],
                         vertex.matrix[0][2] / vertex.matrix[0][3],
@@ -112,11 +107,11 @@ public class Mesh {
                 );
 
             } else {
-                points[i] = new Vertex(vertex);
+                points[i] = new Vertex3D(vertex);
             }
         }
 
-        Triangle projectedTriangle = new Triangle(points);
+        Triangle3D projectedTriangle = new Triangle3D(points);
         projectedTriangle.exposition = triangle.exposition;
 
 
@@ -127,10 +122,10 @@ public class Mesh {
     public void rotateX(double angle) {
         for (int i = 0; i < triangles.size(); i++) {
             triangles.set(i,
-                    new Triangle(
-                        new Vertex(DoubleMatrix2D.rotateX(triangles.get(i).getPoints()[0].toMatrix(3), angle)),
-                        new Vertex(DoubleMatrix2D.rotateX(triangles.get(i).getPoints()[1].toMatrix(3), angle)),
-                        new Vertex(DoubleMatrix2D.rotateX(triangles.get(i).getPoints()[2].toMatrix(3), angle))
+                    new Triangle3D(
+                        new Vertex3D(DoubleMatrix2D.rotateX(triangles.get(i).getPoints()[0].toMatrix(), angle)),
+                        new Vertex3D(DoubleMatrix2D.rotateX(triangles.get(i).getPoints()[1].toMatrix(), angle)),
+                        new Vertex3D(DoubleMatrix2D.rotateX(triangles.get(i).getPoints()[2].toMatrix(), angle))
                     )
             );
         }
@@ -140,10 +135,10 @@ public class Mesh {
     public void rotateY(double angle) {
         for (int i = 0; i < triangles.size(); i++) {
             triangles.set(i,
-                    new Triangle(
-                            new Vertex(DoubleMatrix2D.rotateY(triangles.get(i).getPoints()[0].toMatrix(3), angle)),
-                            new Vertex(DoubleMatrix2D.rotateY(triangles.get(i).getPoints()[1].toMatrix(3), angle)),
-                            new Vertex(DoubleMatrix2D.rotateY(triangles.get(i).getPoints()[2].toMatrix(3), angle))
+                    new Triangle3D(
+                            new Vertex3D(DoubleMatrix2D.rotateY(triangles.get(i).getPoints()[0].toMatrix(), angle)),
+                            new Vertex3D(DoubleMatrix2D.rotateY(triangles.get(i).getPoints()[1].toMatrix(), angle)),
+                            new Vertex3D(DoubleMatrix2D.rotateY(triangles.get(i).getPoints()[2].toMatrix(), angle))
                     )
             );
         }
@@ -153,59 +148,64 @@ public class Mesh {
     public void rotateZ(double angle) {
         for (int i = 0; i < triangles.size(); i++) {
             triangles.set(i,
-                    new Triangle(
-                            new Vertex(DoubleMatrix2D.rotateZ(triangles.get(i).getPoints()[0].toMatrix(3), angle)),
-                            new Vertex(DoubleMatrix2D.rotateZ(triangles.get(i).getPoints()[1].toMatrix(3), angle)),
-                            new Vertex(DoubleMatrix2D.rotateZ(triangles.get(i).getPoints()[2].toMatrix(3), angle))
+                    new Triangle3D(
+                            new Vertex3D(DoubleMatrix2D.rotateZ(triangles.get(i).getPoints()[0].toMatrix(), angle)),
+                            new Vertex3D(DoubleMatrix2D.rotateZ(triangles.get(i).getPoints()[1].toMatrix(), angle)),
+                            new Vertex3D(DoubleMatrix2D.rotateZ(triangles.get(i).getPoints()[2].toMatrix(), angle))
                     )
             );
         }
     }
 
 
-    public Mesh render(
-            Vertex CameraPosition,
-            Vector lightDirection,
-            DoubleMatrix2D projectionMatrix,
-            Dimension frameSize,
-            double nearPlaneOffset,
-            double thetaX,
-            double thetaY) {
+    private Triangle3D move(Vertex3D camPosition, Triangle3D triangle) {
+        Vertex3D[] points = new Vertex3D[3];
 
-        Mesh newMesh = new Mesh();
-
-        for (Triangle triangle : triangles) {
-            //if (triangle.isBehindNearPlane(nearPlaneOffset)) {
-                Vector camToPoint = new Vector(CameraPosition, triangle.getPoints()[0]);
-                double dotProduct = triangle.rotateY(thetaY).rotateX(thetaX).getNormal().dotProduct(camToPoint);
-
-                if (dotProduct < 0) {
-                    Triangle newTriangle = new Triangle(triangle.rotateY(thetaY).rotateX(thetaX));
-                    newTriangle.exposition = triangle.getExposition(lightDirection);
-                    newMesh.add(toScreen(frameSize, project(projectionMatrix, newTriangle)));
-                }
-            //}
+        for (int i = 0; i < triangle.getPoints().length; i++) {
+            points[i] = new Vertex3D(
+                triangle.getPoints()[i].x - camPosition.x,
+                triangle.getPoints()[i].y - camPosition.y,
+                triangle.getPoints()[i].z - camPosition.z
+            );
         }
 
-        newMesh.sortTriangles();
+        return new Triangle3D(points);
+    }
 
-        return newMesh;
+
+    public Mesh render(CartesianVector lightDirection, DoubleMatrix2D projectionMatrix, Dimension frameSize, Camera camera) {
+        Mesh finalMesh = new Mesh();
+
+        for (Triangle3D triangle : triangles) {
+            CartesianVector camToPoint = new CartesianVector(camera.getPosition(), triangle.getPoints()[0]);
+            Triangle3D rotatedTriangle = triangle.rotateY(camera.getYaw()).rotateX(camera.getPitch());
+            double dotProduct = rotatedTriangle.getNormal().dotProduct(camToPoint);
+
+            if (dotProduct < 0) {
+                rotatedTriangle.exposition = triangle.getExposition(lightDirection);
+                finalMesh.add(toScreen(frameSize, project(projectionMatrix, move(camera.getPosition(), rotatedTriangle))));
+            }
+        }
+
+        finalMesh.sortTriangles();
+
+        return finalMesh;
     }
 
 
     private void sortTriangles() {
-        triangles.sort(new Comparator<Triangle>() {
+        triangles.sort(new Comparator<Triangle3D>() {
             @Override
-            public int compare(Triangle o1, Triangle o2) {
+            public int compare(Triangle3D o1, Triangle3D o2) {
                 double o1Distance = (
-                        o1.getPoints()[0].getCoordinates()[2] +
-                        o1.getPoints()[0].getCoordinates()[2] +
-                        o1.getPoints()[0].getCoordinates()[2]) / 3;
+                        o1.getPoints()[0].z +
+                        o1.getPoints()[0].z +
+                        o1.getPoints()[0].z) / 3;
 
                 double o2Distance = (
-                        o2.getPoints()[0].getCoordinates()[2] +
-                        o2.getPoints()[0].getCoordinates()[2] +
-                        o2.getPoints()[0].getCoordinates()[2]) / 3;
+                        o2.getPoints()[0].z +
+                        o2.getPoints()[0].z +
+                        o2.getPoints()[0].z) / 3;
 
                 return Double.compare(o1Distance, o2Distance);
             }
@@ -213,22 +213,22 @@ public class Mesh {
     }
 
 
-    private Triangle toScreen(Dimension screenSize, Triangle triangle) {
-        Triangle newTriangle = new Triangle(
-                new Vertex(
-                        ((triangle.getPoints()[0].getCoordinates()[0] + 1) * (double) screenSize.width / 2),
-                        ((triangle.getPoints()[0].getCoordinates()[1] + 1) * (double) screenSize.height / 2),
-                        triangle.getPoints()[0].getCoordinates()[2]
+    private Triangle3D toScreen(Dimension screenSize, Triangle3D triangle) {
+        Triangle3D newTriangle = new Triangle3D(
+                new Vertex3D(
+                        ((triangle.getPoints()[0].x + 1) * (double) screenSize.width / 2),
+                        ((triangle.getPoints()[0].y + 1) * (double) screenSize.height / 2),
+                          triangle.getPoints()[0].z
                 ),
-                new Vertex(
-                        ((triangle.getPoints()[1].getCoordinates()[0] + 1) * (double) screenSize.width / 2),
-                        ((triangle.getPoints()[1].getCoordinates()[1] + 1) * (double) screenSize.height / 2),
-                        triangle.getPoints()[1].getCoordinates()[2]
+                new Vertex3D(
+                        ((triangle.getPoints()[1].x + 1) * (double) screenSize.width / 2),
+                        ((triangle.getPoints()[1].y + 1) * (double) screenSize.height / 2),
+                          triangle.getPoints()[1].z
                 ),
-                new Vertex(
-                        ((triangle.getPoints()[2].getCoordinates()[0] + 1) * (double) screenSize.width / 2),
-                        ((triangle.getPoints()[2].getCoordinates()[1] + 1) * (double) screenSize.height / 2),
-                        triangle.getPoints()[2].getCoordinates()[2]
+                new Vertex3D(
+                        ((triangle.getPoints()[2].x + 1) * (double) screenSize.width / 2),
+                        ((triangle.getPoints()[2].y + 1) * (double) screenSize.height / 2),
+                          triangle.getPoints()[2].z
                 )
         );
 
@@ -238,7 +238,7 @@ public class Mesh {
     }
 
 
-    public List<Triangle> getTriangles() {
+    public List<Triangle3D> getTriangles() {
         return triangles;
     }
 
@@ -247,7 +247,7 @@ public class Mesh {
     public String toString() {
         String string = "";
 
-        for (Triangle triangle : triangles) {
+        for (Triangle3D triangle : triangles) {
             string += triangle + "\n";
         }
 

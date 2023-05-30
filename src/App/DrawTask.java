@@ -1,6 +1,7 @@
 package App;
 
-import App.Math.Mesh;
+import App.J3D.Camera;
+import App.J3D.Mesh;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ public class DrawTask extends TimerTask {
     private static final double MOVE_SPEED = Parameters.MOVEMENT_SPEED * (1000f / Parameters.FRAME_RATE);
     private static final Dimension SCREEN_SIZE = Toolkit.getDefaultToolkit().getScreenSize();
     private static final int HALF_SCREEN_WIDTH = (SCREEN_SIZE.width) / 2, HALF_SCREEN_HEIGHT = (SCREEN_SIZE.height) / 2;
+    private final Camera camera = new Camera();
     private final Frame frame;
     private final Canvas canvas;
     private double startingTime = 0, fps = Parameters.FRAME_RATE, fpsSum = 0, thetaX = 0d, thetaY = 0d;
@@ -32,7 +34,7 @@ public class DrawTask extends TimerTask {
         this.frame = frame;
         this.canvas = frame.getCanvas();
         this.object = object;
-        this.object.translate(2, -15);
+        this.object.translateZ(-15);
 
         try {
             robot = new Robot();
@@ -48,27 +50,31 @@ public class DrawTask extends TimerTask {
 
     private void handleKeyEvent() {
         if (zKeyPressed) {
-            object.translate(2, MOVE_SPEED);
+            //camera.moveForward(MOVE_SPEED);
+            object.translateZ(MOVE_SPEED);
         }
 
         if (qKeyPressed) {
-            object.translate(0, -MOVE_SPEED);
+            object.translateX(-MOVE_SPEED);
         }
 
         if (sKeyPressed) {
-            object.translate(2, -MOVE_SPEED);
+            //camera.moveForward(-MOVE_SPEED);
+            object.translateZ(-MOVE_SPEED);
         }
 
         if (dKeyPressed) {
-            object.translate(0, MOVE_SPEED);
+            object.translateX(MOVE_SPEED);
         }
 
         if (spaceKeyPressed) {
-            object.translate(1, -MOVE_SPEED);
+            //camera.moveUpDown(-MOVE_SPEED);
+            object.translateY(-MOVE_SPEED);
         }
 
         if (shiftKeyPressed) {
-            object.translate(1, MOVE_SPEED);
+            //camera.moveUpDown(MOVE_SPEED);
+            object.translateY(MOVE_SPEED);
         }
     }
 
@@ -77,12 +83,13 @@ public class DrawTask extends TimerTask {
         PointerInfo pointerInfo = MouseInfo.getPointerInfo();
         Point mousePosition = pointerInfo.getLocation();
 
-        thetaX -= Parameters.VERTICAL_MOUSE_SENSITIVITY
+        camera.yaw(Parameters.HORIZONTAL_MOUSE_SENSITIVITY
                 * 2 * Math.PI
-                * ((double) (mousePosition.y - HALF_SCREEN_HEIGHT) / HALF_SCREEN_HEIGHT);
-        thetaY += Parameters.HORIZONTAL_MOUSE_SENSITIVITY
+                * ((double) (mousePosition.x - HALF_SCREEN_WIDTH) / HALF_SCREEN_WIDTH));
+
+        camera.pitch(-Parameters.VERTICAL_MOUSE_SENSITIVITY
                 * 2 * Math.PI
-                * ((double) (mousePosition.x - HALF_SCREEN_WIDTH) / HALF_SCREEN_WIDTH);
+                * ((double) (mousePosition.y - HALF_SCREEN_HEIGHT) / HALF_SCREEN_HEIGHT));
 
         robot.mouseMove(HALF_SCREEN_WIDTH, HALF_SCREEN_HEIGHT);
     }
@@ -118,13 +125,10 @@ public class DrawTask extends TimerTask {
         }
 
         canvas.draw(object.render(
-                Parameters.Camera,
                 Parameters.Light,
                 Parameters.PROJECTION_MATRIX,
                 Parameters.FRAME_SIZE,
-                Parameters.Z_NEAR,
-                thetaX,
-                thetaY)
+                camera)
         );
 
         printFrameRate();
