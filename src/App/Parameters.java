@@ -41,7 +41,7 @@ public class Parameters {
 
 
     // PLAYER
-    public static final double MOVEMENT_SPEED = 0.024d;
+    public static final double MOVEMENT_SPEED = 0.02d;
     public static final double VERTICAL_MOUSE_SENSITIVITY = 0.25d;
     public static final double HORIZONTAL_MOUSE_SENSITIVITY = 0.5d;
 
